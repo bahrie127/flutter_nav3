@@ -12,94 +12,68 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BottomNavbarWidget(),
+      home: TabbarWidget(),
     );
   }
 }
 
-class BottomNavbarWidget extends StatefulWidget {
-  const BottomNavbarWidget({Key? key}) : super(key: key);
+class TabbarWidget extends StatefulWidget {
+  const TabbarWidget({Key? key}) : super(key: key);
 
   @override
-  State<BottomNavbarWidget> createState() => _BottomNavbarWidgetState();
+  State<TabbarWidget> createState() => _TabbarWidgetState();
 }
 
-class _BottomNavbarWidgetState extends State<BottomNavbarWidget> {
-  final List<Widget> list = const [
-    Text('Home'),
-    Text('Cart'),
-    Text('Favorite'),
-    Text('User'),
-  ];
+class _TabbarWidgetState extends State<TabbarWidget>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
 
-  int _selectedIndex = 0;
-  List<dynamic> menuItems = [
-    {
-      'icon': Icon(Icons.home),
-      'label': 'Home',
-    },
-    {
-      'icon': Icon(Icons.shopping_bag),
-      'label': 'Cart',
-    },
-    {
-      'icon': Icon(Icons.favorite),
-      'label': 'Favorite',
-    },
-    {
-      'icon': Icon(Icons.person),
-      'label': 'Profile',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {});
+  }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Bottom Navbar"),
-        actions: const [],
-      ),
-      body: Center(
-        child: list[_selectedIndex],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        showUnselectedLabels: false,
-        showSelectedLabels: false,
-        unselectedItemColor: Colors.black87,
-        elevation: 32.0,
-        type: BottomNavigationBarType.fixed,
-        selectedLabelStyle: const TextStyle(
-          height: 1.5,
-          fontSize: 12,
-        ),
-        unselectedLabelStyle: const TextStyle(
-          height: 1.5,
-          fontSize: 12,
-        ),
-        items: menuItems.map((i) {
-          return BottomNavigationBarItem(
-            activeIcon: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.all(Radius.circular(14)),
-              ),
-              child: i['icon'],
+        title: const Text("Tabbar"),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(
+              icon: Icon(Icons.directions_boat),
             ),
-            icon: i['icon'],
-            label: i['label'],
-          );
-        }).toList(),
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onItemTapped,
+            Tab(
+              icon: Icon(Icons.directions_bus),
+            ),
+            Tab(
+              icon: Icon(Icons.directions_ferry),
+            ),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          Center(
+            child: Text('Tab 1'),
+          ),
+          Center(
+            child: Text('Tab 2'),
+          ),
+          Center(
+            child: Text('Tab 3'),
+          ),
+        ],
       ),
     );
   }
